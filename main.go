@@ -84,7 +84,7 @@ func defaultConfig() Config {
 		SoundEnabled:   true,
 		SoundStart:     "/usr/share/sounds/freedesktop/stereo/message-new-instant.oga",
 		SoundEnd:       "/usr/share/sounds/freedesktop/stereo/complete.oga",
-		NotifyExpireMS: 15000,
+		NotifyExpireMS: 10000,
 	}
 }
 
@@ -137,7 +137,7 @@ func loadConfig() (Config, error) {
 	}
 	cfg.Timers = valid
 	if cfg.NotifyExpireMS <= 0 {
-		cfg.NotifyExpireMS = 15000
+		cfg.NotifyExpireMS = 10000
 	}
 	return cfg, nil
 }
