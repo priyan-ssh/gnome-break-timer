@@ -464,6 +464,11 @@ func (d *Daemon) closeNotifyWaiter(id uint32) {
 	d.notifyMu.Unlock()
 }
 
+func (d *Daemon) closeNotificationDBus(id uint32) {
+	obj := d.conn.Object(notifyDest, dbus.ObjectPath(notifyPath))
+	obj.Call("org.freedesktop.Notifications.CloseNotification", 0, id)
+}
+
 func (d *Daemon) simpleNotify(summary, body string) {
 	obj := d.conn.Object(notifyDest, dbus.ObjectPath(notifyPath))
 	obj.Call("org.freedesktop.Notifications.Notify", 0,
@@ -554,9 +559,12 @@ func (d *Daemon) runBreakFlow(t *timerRuntime) {
 	case action = <-waiter:
 	case <-time.After(time.Duration(cfg.NotifyExpireMS) * time.Millisecond):
 		action = ""
+		d.closeNotificationDBus(id)
 	case <-d.quit:
+		d.closeNotificationDBus(id)
 		return
 	case <-t.stopCh:
+		d.closeNotificationDBus(id)
 		return
 	}
 
